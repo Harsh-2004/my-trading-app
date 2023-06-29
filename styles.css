@@ -1,0 +1,249 @@
+/* styles.css */
+
+/* Styles for the dashboard */
+body {
+    font-family: 'Courier New', Courier, monospace;
+    background-color: #0f0f17;
+    margin: 0;
+    padding: 0;
+    color: #fff; /* White text color */
+  }
+  
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  
+  h1 {
+    font-size: 36px;
+    font-weight: bold;
+    color: #fff; /* White text color */
+  }
+  
+  .content {
+    background-color: #1a1a27;
+    padding: 20px;
+    margin-bottom: 40px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  }
+  
+  h2 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #fff; /* White text color */
+    margin-bottom: 20px;
+  }
+  
+  p {
+    font-size: 18px;
+    color: #fff; /* White text color */
+    margin-bottom: 10px;
+  }
+  
+  .asset-list {
+    background-color: #1a1a27;
+    padding: 20px;
+    margin-bottom: 40px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  }
+  
+  .asset-icon {
+    width: 40px; /* Adjust the width as needed */
+    height: 40px; /* Adjust the height as needed */
+  }
+  
+  .asset-card {
+    background-color: #12121a;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 6px;
+  }
+  
+  .asset-card h3 {
+    font-size: 20px;
+    font-weight: bold;
+    color: #fff;
+    margin-bottom: 10px;
+  }
+  
+  .asset-card p {
+    font-size: 16px;
+    color: #fff;
+    margin-bottom: 5px;
+  }
+  
+  .trading-signals {
+    background-color: #1a1a27;
+    padding: 20px;
+    margin-bottom: 40px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  }
+  
+  .trading-signals table {
+    width: 100%;
+    border-collapse: collapse;
+    color: #fff; /* White text color */
+  }
+  
+  .trading-signals th,
+  .trading-signals td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #333;
+  }
+  
+  .trading-signals th {
+    background-color: #12121a;
+  }
+  
+  .trading-signals tr:hover {
+    background-color: #191922;
+  }
+
+  .sentiment-cell {
+    position: relative;
+  }
+  
+  .arrow-up::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(45deg);
+    width: 0.5rem;
+    height: 0.5rem;
+    border-left: 2px solid green;
+    border-bottom: 2px solid green;
+  }
+  
+  .arrow-down::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-45deg);
+    width: 0.5rem;
+    height: 0.5rem;
+    border-left: 2px solid red;
+    border-bottom: 2px solid red;
+  }
+  
+  .arrow-horizontal::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 0.5rem;
+    height: 0.5rem;
+    border-bottom: 2px solid blue;
+  }
+  
+  
+  .asset-details {
+    background-color: #1a1a27;
+    padding: 20px;
+    margin-bottom: 40px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  }
+  
+  .asset-details h2 {
+    margin-bottom: 20px;
+    color: #fff; /* White text color */
+  }
+  
+  .asset-trading {
+    background-color: #1a1a27;
+    padding: 20px;
+    margin-bottom: 40px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  }
+  
+  .news-articles {
+    margin-top: 20px;
+  }
+  
+  .news-article {
+    background-color: #12121a;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 6px;
+  }
+  
+  .news-article h3 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #8e63b5; /* Purple text color */
+    margin-bottom: 10px;
+  }
+  
+  .news-article p {
+    font-size: 18px;
+    color: #8e63b5; /* Purple text color */
+    margin-bottom: 10px;
+    line-height: 1.4;
+  }
+  
+  .news-article a {
+    color: #8e63b5; /* Purple text color */
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  .news-article a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Styles for each chart container */
+  .charts-container {
+    border: 1px solid #333;
+  }
+  
+  /* Styles for the canvas element */
+  .chart-container canvas {
+    width: 100% !important;
+    height: auto !important;
+  }
+  
+  .transaction-history {
+    background-color: #1a1a27;
+    padding: 20px;
+    margin-bottom: 40px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  }
+  
+  .transaction-history table {
+    width: 100%;
+    border-collapse: collapse;
+    color: #fff; /* White text color */
+  }
+  
+  .transaction-history th,
+  .transaction-history td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #333;
+  }
+  
+  .transaction-history th {
+    background-color: #12121a;
+  }
+  
+  .transaction-history tr:hover {
+    background-color: #191922;
+  }
+  
+  
+  
+  
+  
+  
+  
+  
+  

@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <title>Dashboard</title>
+  
+</head>
+<body>
+  <button onclick="redirectToPriceCharts()">Price Charts</button>
+  <div class="container">
+    <div class="header">
+      <h1>Welcome to the Dashboard</h1>
+    </div>
+
+    <div class="content">
+      <h2>User Profile</h2>
+      <p>Username: <span id="username"></span></p>
+      <p>Email: <span id="email"></span></p>
+    </div>
+
+    <div class="asset-list">
+      <h2>Asset Listings</h2>
+      <div id="asset-list"></div>
+    </div>
+
+    <div class="trading-signals">
+      <table>
+        <thead>
+          <tr>
+            <th>Crypto</th>
+            <th>In/Out Variable</th>
+            <th>Large Transactions Variable</th>
+            <th>Addresses Net Growth</th>
+            <th>Concentration Variable</th>
+          </tr>
+        </thead>
+        <tbody id="trading-signals-data"></tbody>
+      </table>
+    </div>
+     
+     <!-- <h1>Cryptocurrency Price Charts</h1>
+<div class="charts-container">
+  <div id="chart-container-1" class="chart-container"></div>
+  <div id="chart-container-2" class="chart-container"></div>
+  <div id="chart-container-3" class="chart-container"></div>
+  Add more chart containers as needed -->
+
+    
+
+    <div class="news-articles">
+      <h2>News Articles</h2>
+      <div id="news-articles-list"></div>
+    </div>
+    
+    
+
+    <div class="asset-details">
+      <h2>Asset Details</h2>
+      <form id="asset-details-form">
+        <label for="asset-id-input">Asset ID:</label>
+        <input type="text" id="asset-id-input" name="asset-id" required>
+        <button type="submit">Get Price</button>
+      </form>
+      <div id="asset-price"></div>
+    </div>
+
+    <div class="asset-trading">
+      <h2>Asset Trading</h2>
+      <form id="trade-form">
+        <label for="asset-id">Asset ID:</label>
+        <input type="text" id="asset-id" name="asset-id" required>
+
+        <label for="trade-type">Trade Type:</label>
+        <input type="text" id="trade-type" name="trade-type" required>
+
+        <label for="quantity">Quantity:</label>
+        <input type="number" id="quantity" name="quantity" required>
+
+        <label for="price">Price:</label>
+        <input type="text" id="price" name="price" required>
+
+        <button type="submit">Place Trade Order</button>
+      </form>
+    </div>
+
+    <div class="transaction-history">
+      <h2>Transaction History</h2>
+      <table id="transaction-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Asset</th>
+            <th>Type</th>
+            <th>Quantity</th>
+            <th>Price</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>© 2023 Harsha Dashboard. All rights reserved.</p>
+  </div>
+
+  <script>
+    function redirectToPriceCharts() {
+      window.location.href = "price_chart.html";
+    }
+    // Fetch user profile data from the server
+    fetch('/user/profile')
+      .then(function(response) {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error('Failed to retrieve user profile');
+        }
+      })
+      .then(function(data) {
+        // Populate the user profile placeholders with the retrieved data
+        document.getElementById('username').textContent = data.username;
+        document.getElementById('email').textContent = data.email;
+      })
+      .catch(function(error) {
+        console.error(error);
+        alert('Failed to retrieve user profile. Please try again.');
+      });
+
+    // Fetch asset listings from the server
+fetch('https://api.coinranking.com/v2/coins')
+  .then(function(response) {
+    if (response.ok) {
+      return response.json();
+    } else {
+      throw new Error('Failed to retrieve asset listings');
+    }
+  })
+  .then(function(data) {
+    var assetListDiv = document.getElementById('asset-list');
+    var coinsPerPage = 10; // Set the number of coins to display per page
+    var currentPage = 1; // Set the initial page number
+    var startIndex = (currentPage - 1) * coinsPerPage;
+    var endIndex = startIndex + coinsPerPage;
+
+    // Function to render a subset of coins on the page
+    function renderCoins(startIndex, endIndex) {
+      assetListDiv.innerHTML = ''; // Clear the asset list
+
+      data.data.coins.slice(startIndex, endIndex).forEach(function(asset) {
+        var assetCard = document.createElement('div');
+        assetCard.classList.add('asset-card');
+
+        var symbol = asset.symbol;
+        var name = asset.name;
+        var price = asset.price;
+        var iconUrl = asset.iconUrl;
+        var marketCap = asset.marketCap;
+
+        // Create an image element for the asset icon
+        var icon = document.createElement('img');
+        icon.src = iconUrl; // Use the provided icon URL
+        icon.alt = symbol + ' Icon'; // Set alt text for the image
+        icon.classList.add('asset-icon');
+
+        // Append the icon to the asset card
+        assetCard.appendChild(icon);
+
+        var title = document.createElement('h3');
+        title.textContent = name;
+        assetCard.appendChild(title);
+
+        var symbolPara = document.createElement('p');
+        symbolPara.textContent = 'Symbol: ' + symbol;
+        assetCard.appendChild(symbolPara);
+
+        var pricePara = document.createElement('p');
+        pricePara.textContent = 'Price: ' + price;
+        assetCard.appendChild(pricePara);
+
+        var marketCapPara = document.createElement('p');
+        marketCapPara.textContent = 'Market Cap: ' + marketCap;
+        assetCard.appendChild(marketCapPara);
+
+        
+
+        assetListDiv.appendChild(assetCard);
+      });
+    }
+
+    // Function to handle page navigation
+    function navigateToPage(pageNumber) {
+      currentPage = pageNumber;
+      startIndex = (currentPage - 1) * coinsPerPage;
+      endIndex = startIndex + coinsPerPage;
+      renderCoins(startIndex, endIndex);
+    }
+
+    // Initial render of coins
+    renderCoins(startIndex, endIndex);
+
+    // Pagination buttons
+    var totalPages = Math.ceil(data.data.coins.length / coinsPerPage);
+    var paginationDiv = document.createElement('div');
+    paginationDiv.classList.add('pagination');
+
+    for (var i = 1; i <= totalPages; i++) {
+      var pageButton = document.createElement('button');
+      pageButton.textContent = i;
+      pageButton.addEventListener('click', function() {
+        navigateToPage(Number(this.textContent));
+      });
+      paginationDiv.appendChild(pageButton);
+    }
+
+    assetListDiv.appendChild(paginationDiv);
+  })
+  .catch(function(error) {
+    console.error(error);
+    alert('Failed to retrieve asset listings. Please try again.');
+  });
+
+
+
+
+    // Listen for the asset details form submission
+    document.getElementById('asset-details-form').addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      // Retrieve asset ID input
+      var assetName = document.getElementById('asset-id-input').value;
+
+      // Send request to fetch asset details
+      fetch('/assets/' + assetName)
+        .then(function(response) {
+          if (response.ok) {
+            return response.json();
+          } else {
+            throw new Error('Failed to retrieve asset details');
+          }
+        })
+        .then(function(data) {
+          // Display the asset price
+          var assetPriceDiv = document.getElementById('asset-price');
+          assetPriceDiv.textContent = 'Price: ' + data.price;
+        })
+        .catch(function(error) {
+          console.error(error);
+          alert('Failed to retrieve asset details. Please try again.');
+        });
+    });
+
+const symbols = ['ETH', 'BTC','DOGE','USDT', 'XRP', 'USDC', 'ADA', 'LTC', 'MATIC', 'DOT', 'SHIB', 'AVAX'];
+const apiKey = 'ff3a1c177937929276b907794f260261034d08d3499e7338fce2d1ace0ac968b';
+
+const container = document.getElementById('trading-signals-data');
+
+symbols.forEach(symbol => {
+  fetch(`https://min-api.cryptocompare.com/data/tradingsignals/intotheblock/latest?fsym=${symbol}&api_key=${apiKey}`)
+    .then(response => response.json())
+    .then(data => {
+      if (data.Response === 'Success') {
+        const signal = data.Data;
+        const inOutVar = signal.inOutVar;
+        const largetxsVar = signal.largetxsVar;
+        const addressesNetGrowth = signal.addressesNetGrowth;
+        const concentrationVar = signal.concentrationVar;
+
+        // Create a table row for each trading signal
+        const row = document.createElement('tr');
+
+        // Create table data for each column
+        const cryptoData = document.createElement('td');
+        cryptoData.textContent = symbol;
+
+        const inOutVarData = document.createElement('td');
+        inOutVarData.textContent = inOutVar.sentiment;
+        inOutVarData.classList.add('sentiment-cell');
+        if (inOutVar.sentiment === 'bullish') {
+          inOutVarData.innerHTML += '<span class="arrow-up"></span>';
+        } else if (inOutVar.sentiment === 'bearish') {
+          inOutVarData.innerHTML += '<span class="arrow-down"></span>';
+        } else if (inOutVar.sentiment === 'neutral') {
+          inOutVarData.innerHTML += '<span class="arrow-horizontal"></span>';
+        }
+
+        const largetxsVarData = document.createElement('td');
+        largetxsVarData.textContent = largetxsVar.sentiment;
+        largetxsVarData.classList.add('sentiment-cell');
+        if (largetxsVar.sentiment === 'bullish') {
+          largetxsVarData.innerHTML += '<span class="arrow-up"></span>';
+        } else if (largetxsVar.sentiment === 'bearish') {
+          largetxsVarData.innerHTML += '<span class="arrow-down"></span>';
+        } else if (largetxsVar.sentiment === 'neutral') {
+          largetxsVarData.innerHTML += '<span class="arrow-horizontal"></span>';
+        }
+
+        const addressesNetGrowthData = document.createElement('td');
+        addressesNetGrowthData.textContent = addressesNetGrowth.sentiment;
+        addressesNetGrowthData.classList.add('sentiment-cell');
+        if (addressesNetGrowth.sentiment === 'bullish') {
+          addressesNetGrowthData.innerHTML += '<span class="arrow-up"></span>';
+        } else if (addressesNetGrowth.sentiment === 'bearish') {
+          addressesNetGrowthData.innerHTML += '<span class="arrow-down"></span>';
+        } else if (addressesNetGrowth.sentiment === 'neutral') {
+          addressesNetGrowthData.innerHTML += '<span class="arrow-horizontal"></span>';
+        }
+
+        const concentrationVarData = document.createElement('td');
+        concentrationVarData.textContent = concentrationVar.sentiment;
+        concentrationVarData.classList.add('sentiment-cell');
+        if (concentrationVar.sentiment === 'bullish') {
+          concentrationVarData.innerHTML += '<span class="arrow-up"></span>';
+        } else if (concentrationVar.sentiment === 'bearish') {
+          concentrationVarData.innerHTML += '<span class="arrow-down"></span>';
+        } else if (concentrationVar.sentiment === 'neutral') {
+          concentrationVarData.innerHTML += '<span class="arrow-horizontal"></span>';
+        }
+
+        // Append table data to the row
+        row.appendChild(cryptoData);
+        row.appendChild(inOutVarData);
+        row.appendChild(largetxsVarData);
+        row.appendChild(addressesNetGrowthData);
+        row.appendChild(concentrationVarData);
+
+        // Append the row to the table body
+        container.appendChild(row);
+      }
+    })
+    .catch(error => {
+      console.error(`Error fetching trading signals for ${symbol}:`, error);
+    });
+});
+
+
+
+  // Create a container element for the charts
+// var chartsContainer = document.createElement('div');
+// chartsContainer.classList.add('charts-container');
+// document.body.appendChild(chartsContainer);
+
+// // Array of cryptocurrency symbols
+// var symbols1 = ['bitcoin', 'ethereum', 'ripple'];
+
+// // Fetch price data for each cryptocurrency
+// symbols1.forEach(function(symbol) {
+//   var apiUrl = 'https://api.coingecko.com/api/v3/coins/' + symbol + '/market_chart?vs_currency=usd&days=7';
+
+//   fetch(apiUrl)
+//     .then(function(response) {
+//       if (response.ok) {
+//         return response.json();
+//       } else {
+//         throw new Error('Failed to retrieve price data for ' + symbol);
+//       }
+//     })
+//     .then(function(data) {
+//       var prices = data.prices.map(function(dataPoint) {
+//         return dataPoint[1];
+//       });
+
+//       var chartContainer = document.createElement('div');
+//       chartContainer.classList.add('chart-container');
+//       chartsContainer.appendChild(chartContainer);
+
+//       var canvas = document.createElement('canvas');
+//       canvas.width = 150;
+//       canvas.height = 100;
+//       chartContainer.appendChild(canvas);
+
+//       var ctx = canvas.getContext('2d');
+//       new Chart(ctx, {
+//         type: 'line',
+//         data: {
+//           labels: data.prices.map(function(dataPoint) {
+//             var date = new Date(dataPoint[0]);
+//             return date.toLocaleDateString();
+//           }),
+//           datasets: [
+//             {
+//               label: symbol.toUpperCase() + ' Price',
+//               data: prices,
+//               backgroundColor: 'rgba(0, 123, 255, 0.1)',
+//               borderColor: 'rgba(0, 123, 255, 0.8)',
+//               borderWidth: 1
+//             }
+//           ]
+//         },
+//         options: {
+//           responsive: true,
+//           maintainAspectRatio: false,
+//           plugins: {
+//             legend: {
+//               display: false
+//             }
+//           },
+//           scales: {
+//             x: {
+//               display: true
+//             },
+//             y: {
+//               display: true,
+//               beginAtZero: false
+//             }
+//           },
+//           layout: {
+//             padding: {
+//               top: 10,
+//               bottom: 10,
+//               left: 10,
+//               right: 10
+//             }
+//           }
+//         }
+//       });
+//     })
+//     .catch(function(error) {
+//       console.error(error);
+//       // Handle the error if fetching price data fails
+//     });
+// });
+
+   
+  // Fetch news articles from the CryptoCompare API
+fetch('https://min-api.cryptocompare.com/data/v2/news/?lang=EN')
+  .then(function(response) {
+    if (response.ok) {
+      return response.json();
+    } else {
+      throw new Error('Failed to retrieve news articles');
+    }
+  })
+  .then(function(data) {
+    var newsArticlesListDiv = document.getElementById('news-articles-list');
+
+    data.Data.forEach(function(article) {
+      var articleCard = document.createElement('div');
+      articleCard.classList.add('article-card');
+
+      var title = document.createElement('h3');
+      title.textContent = article.title;
+      articleCard.appendChild(title);
+
+      var sourcePara = document.createElement('p');
+      sourcePara.textContent = 'Source: ' + article.source;
+      articleCard.appendChild(sourcePara);
+
+      var publishedPara = document.createElement('p');
+      var publishedDate = new Date(article.published_on * 1000);
+      publishedPara.textContent = 'Published: ' + publishedDate.toLocaleString();
+      articleCard.appendChild(publishedPara);
+
+      var descriptionPara = document.createElement('p');
+      descriptionPara.textContent = article.body;
+      articleCard.appendChild(descriptionPara);
+
+      articleCard.addEventListener('click', function() {
+        window.open(article.url, '_blank');
+      });
+
+      newsArticlesListDiv.appendChild(articleCard);
+    });
+  })
+  .catch(function(error) {
+    console.error(error);
+    alert('Failed to retrieve news articles. Please try again.');
+  });
+
+
+ 
+    // Listen for the trade form submission
+    document.getElementById('trade-form').addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      // Retrieve form inputs
+      var assetId = document.getElementById('asset-id').value;
+      var tradeType = document.getElementById('trade-type').value;
+      var quantity = document.getElementById('quantity').value;
+      var price = document.getElementById('price').value;
+
+      // Prepare the request payload
+      var payload = {
+        assetId: assetId,
+        tradeType: tradeType,
+        quantity: quantity,
+        price: price
+      };
+
+      // Send the trade request to the server
+      fetch('/trade', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      })
+        .then(function(response) {
+          if (response.ok) {
+            return response.json();
+          } else {
+            throw new Error('Failed to place trade order');
+          }
+        })
+        .then(function(data) {
+          // Display success message or perform other actions as needed
+          alert('Trade order placed successfully');
+        })
+        .catch(function(error) {
+          console.error(error);
+          alert('Failed to place trade order. Please try again.');
+        });
+    });
+  </script>
+</body>
+</html>
+
+
+

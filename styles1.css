@@ -1,0 +1,13 @@
+body {
+    background-color: #1c1c2a;
+    color: white;
+    font-family: "Courier New", Courier, monospace;
+    padding: 20px;
+    margin: 0;
+  }
+
+  canvas {
+    background-color: #262c42;
+    border-radius: 4px;
+    margin-bottom: 20px;
+  }

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="styles1.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <title>Price Charts</title>
+  <style>
+    canvas {
+      width: 400px;
+      height: 300px;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div id="priceChartsContainer"></div>
+
+  <script>
+    // Function to fetch price data from CoinGecko API
+    async function fetchPriceData(currency) {
+      const response = await fetch(`https://api.coingecko.com/api/v3/coins/${currency}/market_chart?vs_currency=usd&days=7`);
+      const data = await response.json();
+      return data;
+    }
+
+    // Function to create and render a price chart for a given currency
+    async function renderPriceChart(currency) {
+      const priceData = await fetchPriceData(currency);
+      const labels = priceData.prices.map(entry => new Date(entry[0]).toLocaleDateString());
+      const prices = priceData.prices.map(entry => entry[1]);
+
+      const chartContainer = document.createElement('div');
+      chartContainer.className = 'chartContainer';
+      document.getElementById('priceChartsContainer').appendChild(chartContainer);
+
+      const canvas = document.createElement('canvas');
+      chartContainer.appendChild(canvas);
+
+      const ctx = canvas.getContext('2d');
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: currency.toUpperCase(),
+              data: prices,
+              borderColor: getRandomColor(),
+              fill: false
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            x: {
+              display: true,
+              title: {
+                display: true,
+                text: 'Date'
+              }
+            },
+            y: {
+              display: true,
+              title: {
+                display: true,
+                text: 'Price (USD)'
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Generate random color for each chart
+    function getRandomColor() {
+      const letters = '0123456789ABCDEF';
+      let color = '#';
+      for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+    }
+
+    // Render the price charts when the page loads
+    window.addEventListener('load', () => {
+      const currencies = ['bitcoin', 'tether', 'ripple', 'cardano', 'binancecoin', 'usd-coin', 'dogecoin','solana','litecoin','tron','polkadot','polygon','shiba-inu'];
+      currencies.forEach(currency => renderPriceChart(currency));
+    });
+  </script>
+</body>
+</html>
+
+
